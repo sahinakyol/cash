@@ -1,13 +1,6 @@
 #ifndef CASH_COMMAND_FUNCS_H
 #define CASH_COMMAND_FUNCS_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <limits.h>
-#include <unistd.h>
-
 void clear_proc(void);
 
 void pwd_proc(void);

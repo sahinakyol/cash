@@ -2,10 +2,6 @@
 #define CASH_COMMAND_READ_FUNCS_H
 #define MAX_CMD_LINE        4096
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-
 char **get_input(char *input);
 
 char *readline(void);

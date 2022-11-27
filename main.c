@@ -1,12 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 #include <unistd.h>
-#include <sys/wait.h>
-#include "command_funcs.h"
 #include "command_read_funcs.h"
+#include "command_runner.h"
 
 int main() {
     char **command;
     char *input;
-
     while (1) {
         if (getcwd(g_cwd, PATH_MAX) == NULL) {
             perror("fatal error (getcwd)");
@@ -18,7 +20,7 @@ int main() {
             continue;
         }
         command = get_input(input);
-        getCommand(command[0]).proc();
+        run_command(command);
     }
     return 0;
 }
