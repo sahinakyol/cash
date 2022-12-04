@@ -14,7 +14,7 @@ int main() {
             perror("fatal error (getcwd)");
             exit(EXIT_SUCCESS);
         }
-        printf("CASH:%s>", g_cwd);
+        printf("CASH:>");
         input = readline();
         if (input == 0) {
             continue;

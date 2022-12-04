@@ -1,23 +1,12 @@
 #ifndef CASH_COMMAND_RUNNER_H
 #define CASH_COMMAND_RUNNER_H
 
-#include <sys/wait.h>
 #include "command_funcs.h"
 
-void run_command(char *const *command);
+void run_command(char **command_and_args);
 
-void run_command(char *const *command) {
-    pid_t child_pid;
-    int status;
-
-    child_pid = fork();
-    if (child_pid == 0) {
-        getCommand(command[0]).proc();
-    } else if (child_pid < 0) {
-        printf("Error forking\n");
-    } else {
-        waitpid(child_pid, &status, WUNTRACED);
-    }
+void run_command(char **command_and_args) {
+    getCommand(command_and_args[0]).proc(command_and_args);
 }
 
 
