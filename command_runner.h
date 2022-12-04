@@ -1,7 +1,3 @@
-//
-// Created by sahin on 27.11.2022.
-//
-
 #ifndef CASH_COMMAND_RUNNER_H
 #define CASH_COMMAND_RUNNER_H
 
@@ -9,17 +5,18 @@
 #include "command_funcs.h"
 
 void run_command(char *const *command);
+
 void run_command(char *const *command) {
-    pid_t cpid;
+    pid_t child_pid;
     int status;
 
-    cpid = fork();
-    if (cpid > 0) {
+    child_pid = fork();
+    if (child_pid == 0) {
         getCommand(command[0]).proc();
-    } else if (cpid < 0)
+    } else if (child_pid < 0) {
         printf("Error forking\n");
-    else {
-        waitpid(cpid, &status, WUNTRACED);
+    } else {
+        waitpid(child_pid, &status, WUNTRACED);
     }
 }
 
