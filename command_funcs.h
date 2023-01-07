@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/errno.h>
+#include <sys/fcntl.h>
 #include "color_strings.h"
 
 void clear_proc(char **args);
@@ -24,6 +25,8 @@ void touch_proc(char **args);
 
 void echo_proc(char **args);
 
+void cp_proc(char **args);
+
 struct tagCMD getCommand(char *command_name);
 
 typedef struct tagCMD {
@@ -43,6 +46,7 @@ CMD g_cmds[] = {
         {"mkdir", mkdir_proc},
         {"touch", touch_proc},
         {"echo",  echo_proc},
+        {"cp",  cp_proc},
         {NULL,    command_not_found_proc}
 };
 
@@ -150,6 +154,43 @@ void echo_proc(char **args) {
         fputs(read_input_arg, stdout);
     }
     putchar('\n');
+}
+
+void cp_proc(char **args) {
+    char *read_input_arg = args[1];
+    char *read_param_arg = args[2];
+
+    if (read_input_arg == NULL || args[2] == NULL) {
+        perror("CP commands missing arguments!!");
+        return;
+    }
+
+    int input_file_read = open(read_input_arg, O_RDONLY);
+    if (input_file_read == -1) {
+        perror("CP can't open input file!!");
+        return;
+    }
+
+    int output_file_write = open(read_param_arg, O_WRONLY | O_CREAT | O_TRUNC, 0664);
+    if (output_file_write == -1) {
+        perror("CP can't open output file!!");
+        return;
+    }
+
+    char buffer[1024];
+    ssize_t bytes_read;
+    while ((bytes_read = read(input_file_read, buffer, sizeof(buffer))) > 0) {
+        if (write(output_file_write, buffer, bytes_read) != bytes_read) {
+            perror("CP can't write!!");
+            return;
+        }
+    }
+    if (bytes_read == -1) {
+        perror("CP can't read!!");
+        return;
+    }
+    close(input_file_read);
+    close(output_file_write);
 }
 
 #endif //CASH_COMMAND_FUNCS_H
