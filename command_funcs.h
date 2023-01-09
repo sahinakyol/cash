@@ -6,6 +6,7 @@
 #include <sys/errno.h>
 #include <sys/fcntl.h>
 #include "color_strings.h"
+#include "cash_binary_tree.h"
 
 void clear_proc(char **args);
 
@@ -27,6 +28,8 @@ void echo_proc(char **args);
 
 void cp_proc(char **args);
 
+void cash_binary_visualize_proc(char **args);
+
 struct tagCMD getCommand(char *command_name);
 
 typedef struct tagCMD {
@@ -38,16 +41,17 @@ typedef struct tagCMD {
 char g_cwd[PATH_MAX];
 
 CMD g_cmds[] = {
-        {"clear", clear_proc},
-        {"pwd",   pwd_proc},
-        {"ls",    ls_proc},
-        {"cd",    cd_proc},
-        {"exit",  exit_proc},
-        {"mkdir", mkdir_proc},
-        {"touch", touch_proc},
-        {"echo",  echo_proc},
-        {"cp",  cp_proc},
-        {NULL,    command_not_found_proc}
+        {"clear",   clear_proc},
+        {"pwd",     pwd_proc},
+        {"ls",      ls_proc},
+        {"cd",      cd_proc},
+        {"exit",    exit_proc},
+        {"mkdir",   mkdir_proc},
+        {"touch",   touch_proc},
+        {"echo",    echo_proc},
+        {"cp",      cp_proc},
+        {"bin_vis", cash_binary_visualize_proc},
+        {NULL,      command_not_found_proc}
 };
 
 struct tagCMD getCommand(char *command_name) {
@@ -160,7 +164,7 @@ void cp_proc(char **args) {
     char *read_input_arg = args[1];
     char *read_param_arg = args[2];
 
-    if (read_input_arg == NULL || args[2] == NULL) {
+    if (read_input_arg == NULL || read_param_arg == NULL) {
         perror("CP commands missing arguments!!");
         return;
     }
@@ -191,6 +195,23 @@ void cp_proc(char **args) {
     }
     close(input_file_read);
     close(output_file_write);
+}
+
+void cash_binary_visualize_proc(char **args) {
+    char *read_input_arg = args[1];
+
+    if (read_input_arg == NULL) {
+        perror("CP commands missing arguments!!");
+        return;
+    }
+    CASH_BINARY_TREE *CASH_BINARY_TREE = NULL;
+    int count_args = 1;
+    while (args[count_args] != NULL) {
+        insert_cash_binary_tree(&CASH_BINARY_TREE, args[count_args]);
+        ++count_args;
+    }
+    traverse_cash_binary_tree(CASH_BINARY_TREE);
+    free(CASH_BINARY_TREE);
 }
 
 #endif //CASH_COMMAND_FUNCS_H
