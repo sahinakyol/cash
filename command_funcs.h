@@ -30,6 +30,8 @@ void cp_proc(char **args);
 
 void cash_binary_visualize_proc(char **args);
 
+void mv_proc(char **args);
+
 struct tagCMD getCommand(char *command_name);
 
 typedef struct tagCMD {
@@ -51,6 +53,7 @@ CMD g_cmds[] = {
         {"echo",    echo_proc},
         {"cp",      cp_proc},
         {"bin_vis", cash_binary_visualize_proc},
+        {"mv",      mv_proc},
         {NULL,      command_not_found_proc}
 };
 
@@ -212,6 +215,50 @@ void cash_binary_visualize_proc(char **args) {
     }
     traverse_cash_binary_tree(CASH_BINARY_TREE);
     free(CASH_BINARY_TREE);
+}
+
+void mv_proc(char **args) {
+    FILE *src;
+    FILE *dst;
+    int BUFSIZE = 4096;
+    char *source_file = args[1];
+    char *destination_file = args[2];
+    char buf[4096];
+    size_t nread;
+
+    if ((src = fopen(source_file, "rb")) == NULL) {
+        perror("MV can not read source file");
+        return;
+    }
+
+    if ((dst = fopen(destination_file, "wb")) == NULL) {
+        perror("MV can not write source file");
+        fclose(src);
+        return;
+    }
+
+    while ((nread = fread(buf, 1, BUFSIZE, src)) > 0) {
+        if (fwrite(buf, 1, nread, dst) != nread) {
+            perror("Error writing to destination file");
+            fclose(src);
+            fclose(dst);
+            return;
+        }
+    }
+
+    if (ferror(src)) {
+        fclose(src);
+        fclose(dst);
+        return;
+    }
+
+    fclose(src);
+    fclose(dst);
+
+    if (remove(source_file) != 0) {
+        perror("Error removing source file");
+        return;
+    }
 }
 
 #endif //CASH_COMMAND_FUNCS_H
